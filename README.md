@@ -124,7 +124,7 @@ A small **ops monitoring system** you can run locally. It simulates a production
 ### Prereqs
 
 * Python 3.10+
-* `pip install -r requirements.txt`
+* pip
 
 ### Environment variables
 
@@ -149,10 +149,13 @@ MOCKAPP_BASE=http://127.0.0.1:8000
 
 ```bash
 python -m venv .venv
-# Windows: .venv\Scripts\activate
+
+# Windows:
+.venv/Scripts/activate
 # macOS/Linux:
 source .venv/bin/activate
-pip install --upgrade pip
+
+pip install --upgrade pip (optional)
 pip install -r requirements.txt
 ```
 
