@@ -123,7 +123,7 @@ CONTROL_HTML = """
     </div>
 
     <div class="card">
-      <h3>Nightly Job</h3>
+      <h3>Batch Job</h3>
       <p>Start a job (finishes ~20s later; succeeds unless <em>Job Fail</em> is ON).</p>
       <div class="row"><button onclick="runJob()">Run Job</button></div>
       <div id="jobInfo" class="mono"></div>
