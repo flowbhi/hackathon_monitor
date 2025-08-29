@@ -1,0 +1,52 @@
+global:
+  retries: 2
+  retry_backoff_s: 5
+  notify:
+    email: true
+  thresholds:
+    api_warn_ms: 1000
+    api_crit_ms: 3000
+
+checks:
+  - name: api-availability
+    type: http
+    url: "{MOCKAPP_BASE}/api/ping"
+    expect_status: 200
+    severity: P1
+    on_fail:
+      actions:
+        - type: http_post
+          url: "{MOCKAPP_BASE}/admin/reset"
+      notify: ["first_fail"]
+    notify_on: ["first_fail","recovered"]
+
+  - name: db-health
+    type: http
+    url: "{MOCKAPP_BASE}/db/health"
+    expect_jsonpath:
+      - path: "$.ok"
+        equals: true
+      - path: "$.latency_ms"
+        lt: 100
+    severity: P2
+    notify_on: ["first_fail","recovered"]
+
+  - name: queue-depth
+    type: http
+    url: "{MOCKAPP_BASE}/queue/health"
+    expect_jsonpath:
+      - path: "$.depth"
+        lt: 50
+      - path: "$.oldest_age_s"
+        lt: 300
+    severity: P2
+    notify_on: ["first_fail","recovered"]
+
+  - name: batch-job
+    type: job
+    start_url: "{MOCKAPP_BASE}/jobs/run"
+    status_url: "{MOCKAPP_BASE}/jobs/{job_id}/status"
+    start_cron: "0 2 * * *"     # 2:00 AM (demo: run via /admin/run-nightly)
+    #success_by: "23:59"         # must succeed by 3:00 AM (local)
+    severity: P1
+    notify_on: ["deadline_miss","recovered"]
